@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khizar Islam Rathore — Full-Stack Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0f0c;
+    --surface: #0f1712;
+    --surface-2: #131d17;
+    --border: #1e2b24;
+    --text: #e8f2ec;
+    --text-dim: #7d9186;
+    --text-dimmer: #4f6157;
+    --accent: #4ade80;
+    --accent-soft: rgba(74, 222, 128, 0.12);
+    --accent-dim: #2f6b47;
+    --amber: #e8a33d;
+    --red: #e0664f;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --radius: 6px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    font-size:16px;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,222,128,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 90% 15%, rgba(74,222,128,0.04), transparent 60%);
+    background-repeat:no-repeat;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--accent); color:#04160c; }
+
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- scanline texture ---------- */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:2;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.012),
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    opacity:0.5;
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,15,12,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px;
+    max-width:1040px; margin:0 auto;
+  }
+  .logo{
+    font-family:var(--mono); font-weight:700; font-size:15px;
+    color:var(--text); letter-spacing:-0.02em;
+  }
+  .logo span{ color:var(--accent); }
+  .nav-links{
+    display:flex; gap:28px; align-items:center;
+    font-family:var(--mono); font-size:13.5px; color:var(--text-dim);
+  }
+  .nav-links a{ position:relative; transition:color .15s ease; white-space:nowrap; }
+  .nav-links a:hover{ color:var(--accent); }
+  .nav-links a::before{ content:"~/"; color:var(--text-dimmer); }
+  .nav-resume{
+    font-family:var(--mono); font-size:13px; font-weight:600;
+    color:var(--bg) !important; background:var(--accent);
+    padding:7px 14px; border-radius:4px;
+    transition:opacity .15s ease;
+  }
+  .nav-resume::before{ content:none !important; }
+  .nav-resume:hover{ opacity:.85; color:var(--bg); }
+  .nav-toggle{ display:none; background:none; border:1px solid var(--border); color:var(--text); font-family:var(--mono); padding:6px 10px; border-radius:4px; cursor:pointer; }
+
+  @media (max-width: 760px){
+    .nav-links{
+      position:fixed; top:64px; left:0; right:0;
+      background:var(--surface); border-bottom:1px solid var(--border);
+      flex-direction:column; align-items:flex-start; gap:0;
+      padding:8px 24px; transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:all .18s ease;
+    }
+    .nav-links.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ width:100%; padding:12px 0; border-bottom:1px solid var(--border); }
+    .nav-links a:last-child{ border-bottom:none; }
+    .nav-toggle{ display:block; }
+  }
+
+  section{ padding:110px 0; }
+  @media (max-width: 760px){ section{ padding:72px 0; } }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; color:var(--accent);
+    display:flex; align-items:center; gap:8px; margin-bottom:18px;
+  }
+  .eyebrow::before{ content:"$"; color:var(--text-dimmer); }
+
+  h2{
+    font-family:var(--mono); font-weight:700; font-size:clamp(24px,3vw,32px);
+    letter-spacing:-0.02em; margin-bottom:36px; color:var(--text);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:100px 0 90px; }
+  .hero-grid{ display:grid; grid-template-columns:1fr; gap:40px; }
+
+  .term-window{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.6), 0 0 0 1px rgba(74,222,128,0.03);
+    max-width:640px;
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:11px 14px; background:var(--surface-2);
+    border-bottom:1px solid var(--border);
+  }
+  .term-dot{ width:10px; height:10px; border-radius:50%; }
+  .term-dot.r{ background:#e0664f; }
+  .term-dot.y{ background:#e8a33d; }
+  .term-dot.g{ background:#4ade80; }
+  .term-title{
+    margin-left:auto; margin-right:auto; transform:translateX(-18px);
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+  }
+  .term-body{
+    padding:26px 24px 30px;
+    font-family:var(--mono); font-size:14.5px;
+    min-height:260px;
+  }
+  .term-line{ display:flex; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
+  .term-prompt{ color:var(--accent); flex-shrink:0; }
+  .term-out{ color:var(--text); }
+  .term-comment{ color:var(--text-dim); }
+  .cursor{
+    display:inline-block; width:8px; height:16px; background:var(--accent);
+    margin-left:2px; vertical-align:-3px;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-name{
+    font-family:var(--mono); font-weight:800; font-size:clamp(28px,4.2vw,40px);
+    line-height:1.15; margin-top:2px; letter-spacing:-0.02em;
+  }
+  .hero-role{
+    font-family:var(--mono); font-size:clamp(16px,2vw,19px); color:var(--accent);
+    margin-top:8px; font-weight:600;
+  }
+
+  .hero-actions{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:14px; font-weight:600;
+    padding:12px 20px; border-radius:5px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px;
+    transition:all .15s ease; border:1px solid transparent;
+  }
+  .btn-primary{ background:var(--accent); color:#04160c; }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(74,222,128,0.5); }
+  .btn-ghost{ border-color:var(--border); color:var(--text); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- about ---------- */
+  .about-body{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:32px; font-family:var(--mono); font-size:14.5px; color:var(--text-dim);
+    line-height:1.85;
+  }
+  .about-body .hl{ color:var(--text); }
+  .about-body p + p{ margin-top:18px; }
+
+  /* ---------- skills ---------- */
+  .skills-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+    gap:10px;
+  }
+  .skill-chip{
+    background:var(--surface); border:1px solid var(--border); border-radius:6px;
+    padding:14px 16px; font-family:var(--mono); font-size:13.5px; color:var(--text);
+    display:flex; align-items:center; gap:10px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .skill-chip:hover{ border-color:var(--accent-dim); transform:translateY(-2px); }
+  .skill-chip::before{ content:"▸"; color:var(--accent); font-size:12px; }
+
+  /* ---------- projects ---------- */
+  .projects-grid{ display:grid; grid-template-columns:1fr; gap:22px; }
+
+  .project-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:24px; display:flex; flex-direction:column;
+    transition:border-color .18s ease, transform .18s ease;
+  }
+  .project-card:hover{ border-color:var(--accent-dim); transform:translateY(-3px); }
+
+  .project-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .project-name{ font-family:var(--mono); font-weight:700; font-size:16px; color:var(--text); }
+  .project-name .dir{ color:var(--text-dimmer); font-weight:400; }
+
+  .status-badge{
+    font-family:var(--mono); font-size:10.5px; font-weight:600;
+    padding:3px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+    display:flex; align-items:center; gap:5px;
+  }
+  .status-badge::before{ content:""; width:6px; height:6px; border-radius:50%; }
+  .status-live{ background:var(--accent-soft); color:var(--accent); }
+  .status-live::before{ background:var(--accent); }
+  .status-build{ background:rgba(232,163,61,0.12); color:var(--amber); }
+  .status-build::before{ background:var(--amber); }
+
+  .project-media{
+    position:relative; aspect-ratio:16/10; border-radius:6px; overflow:hidden;
+    margin-bottom:16px; border:1px solid var(--border); background:var(--surface-2);
+  }
+  .media-bar{
+    position:absolute; top:0; left:0; right:0; z-index:3;
+    display:flex; align-items:center; gap:5px;
+    padding:7px 9px; background:rgba(15,23,18,0.9); backdrop-filter:blur(4px);
+    border-bottom:1px solid var(--border);
+  }
+  .media-bar .mdot{ width:6px; height:6px; border-radius:50%; }
+  .media-bar .mdot.r{ background:#e0664f; } .media-bar .mdot.y{ background:#e8a33d; } .media-bar .mdot.g{ background:#4ade80; }
+  .media-bar .murl{ margin-left:6px; font-family:var(--mono); font-size:10px; color:var(--text-dimmer); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .media-placeholder{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dimmer); text-align:center; padding:20px;
+  }
+  .media-slides{ position:relative; width:100%; height:100%; }
+  .media-slides img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top;
+    opacity:0; transition:opacity .7s ease; z-index:1;
+  }
+  .media-slides img.active{ opacity:1; z-index:2; }
+  .media-dots{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%); z-index:3;
+    display:flex; gap:6px;
+  }
+  .media-dot{
+    width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.28);
+    cursor:pointer; transition:background .2s ease, transform .2s ease; border:none; padding:0;
+  }
+  .media-dot.active{ background:var(--accent); transform:scale(1.2); }
+
+  .project-desc{ color:var(--text-dim); font-size:14px; margin-bottom:14px; }
+
+  .feature-list{ list-style:none; margin-bottom:16px; flex-grow:1; }
+  .feature-list li{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    padding-left:16px; position:relative; margin-bottom:6px; line-height:1.5;
+  }
+  .feature-list li::before{ content:"-"; color:var(--accent); position:absolute; left:0; }
+
+  .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .tag{
+    font-family:var(--mono); font-size:11px; color:var(--accent);
+    background:var(--accent-soft); padding:3px 9px; border-radius:4px;
+  }
+
+  .project-links{ display:flex; gap:16px; font-family:var(--mono); font-size:13px; }
+  .project-links a{ color:var(--text); display:flex; align-items:center; gap:6px; transition:color .15s ease; }
+  .project-links a:hover{ color:var(--accent); }
+  .project-links a.disabled{ color:var(--text-dimmer); pointer-events:none; }
+  .project-links a::before{ content:"→"; color:var(--accent); }
+  .project-links a.disabled::before{ color:var(--text-dimmer); }
+
+  /* ---------- contact ---------- */
+  .contact-box{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:36px;
+  }
+  .contact-lead{ color:var(--text-dim); font-size:15px; max-width:520px; margin-bottom:30px; }
+  .contact-lead .hl{ color:var(--accent); }
+  .contact-list{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+  @media (max-width:600px){ .contact-list{ grid-template-columns:1fr; } }
+
+  .contact-item{
+    display:flex; align-items:center; gap:14px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:6px;
+    padding:16px 18px; transition:border-color .15s ease;
+  }
+  .contact-item:hover{ border-color:var(--accent-dim); }
+  .contact-icon{
+    width:36px; height:36px; border-radius:6px; background:var(--accent-soft);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    color:var(--accent);
+  }
+  .contact-label{ font-family:var(--mono); font-size:11px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:.04em; }
+  .contact-value{ font-family:var(--mono); font-size:13.5px; color:var(--text); word-break:break-word; }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--border); padding:32px 0; margin-top:20px;
+  }
+  .footer-inner{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dimmer);
+  }
+  .footer-inner span.accent{ color:var(--accent); }
+
+  /* ---------- reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#top" class="logo">khizar<span>@</span>dev<span>:~$</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">about</a>
+      <a href="#skills">skills</a>
+      <a href="#projects">projects</a>
+      <a href="#contact">contact</a>
+      <a href="Khizar_Islam_Rathore_CV.pdf" class="nav-resume" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div class="term-window">
+        <div class="term-bar">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span class="term-title">khizar@karachi: ~</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="Khizar_Islam_Rathore_CV.pdf" class="btn btn-primary" target="_blank" rel="noopener">Download Resume ↓</a>
+        <a href="#projects" class="btn btn-ghost">View Projects</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap reveal">
+      <div class="eyebrow">cat about.txt</div>
+      <h2>About</h2>
+      <div class="about-body">
+        <p>I'm a <span class="hl">Software Engineering student at the University of Karachi</span> (BS, 2024–2027), building full-stack, AI-integrated web apps with <span class="hl">React, Next.js, Node.js, Express, and PostgreSQL</span>.</p>
+        <p>I'm especially drawn to <span class="hl">AI integration and automation</span> — wiring LLMs like Gemini into real product workflows to auto-categorize data, generate insights, and score user input, instead of bolting AI on as a gimmick.</p>
+        <p>I've independently designed, built, and deployed a complete AI-powered product end-to-end, and built a second full-stack app with real-time data visualization and AI-generated insights. Right now I'm interning at <span class="hl">CubeIT</span> — in partnership with Project Insaaf / Aurum Welfare Association — working on their official website and their internal platform, <span class="hl">Nexora Workspace</span>.</p>
+        <p>I like shipping things that actually work in production, not just in a demo. Currently looking for internship / full-stack dev roles in Karachi.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap reveal">
+      <div class="eyebrow">ls skills/</div>
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-chip">JavaScript / TypeScript</div>
+        <div class="skill-chip">React.js / Next.js</div>
+        <div class="skill-chip">HTML / CSS</div>
+        <div class="skill-chip">Node.js / Express.js</div>
+        <div class="skill-chip">PostgreSQL / Prisma</div>
+        <div class="skill-chip">REST API Design</div>
+        <div class="skill-chip">Gemini & OpenAI APIs</div>
+        <div class="skill-chip">Git / GitHub</div>
+        <div class="skill-chip">Vercel / Render</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="wrap reveal">
+      <div class="eyebrow">ls projects/ --all</div>
+      <h2>Projects</h2>
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <div class="project-media" data-slug="interview-prep">
+            <div class="media-bar"><span class="mdot r"></span><span class="mdot y"></span><span class="mdot g"></span><span class="murl">interview-prep-platform-xy36.vercel.app</span></div>
+            <div class="media-placeholder">screenshots pending<br>— add to /images/interview-prep/</div>
+            <div class="media-slides">
+              <img src="images/interview-prep/1.jpg" alt="Interview Prep Platform screenshot 1" loading="lazy" onerror="this.remove()">
+              <img src="images/interview-prep/2.jpg" alt="Interview Prep Platform screenshot 2" loading="lazy" onerror="this.remove()">
+              <img src="images/interview-prep/3.jpg" alt="Interview Prep Platform screenshot 3" loading="lazy" onerror="this.remove()">
+              <img src="images/interview-prep/4.jpg" alt="Interview Prep Platform screenshot 4" loading="lazy" onerror="this.remove()">
+            </div>
+            <div class="media-dots"></div>
+          </div>
+          <div class="project-top">
+            <div class="project-name"><span class="dir">~/</span>interview-prep-platform</div>
+            <div class="status-badge status-live">deployed</div>
+          </div>
+          <div class="project-desc">AI mock interview coach that runs realistic, role-specific interview sessions end to end.</div>
+          <ul class="feature-list">
+            <li>Generates a fresh set of 5 role-specific questions (behavioral, technical, system design) for any job title and level — never the same set twice</li>
+            <li>Instant AI-written coaching on every answer, scored on clarity, structure, and content</li>
+            <li>Feedback streams in live as you read it, mimicking the pace of a real conversation</li>
+            <li>Every session saved to a personal dashboard to track scores and pick up where you left off</li>
+            <li>Secure Google sign-in keeps practice history private and synced across devices</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">Next.js</span><span class="tag">Node.js</span><span class="tag">Express</span>
+            <span class="tag">PostgreSQL</span><span class="tag">Gemini API</span><span class="tag">NextAuth</span>
+          </div>
+          <div class="project-links">
+            <a href="https://interview-prep-platform-xy36.vercel.app/" target="_blank" rel="noopener">Live demo</a>
+            <a href="https://github.com/Khizar-Islam/interview-prep-platform" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-media" data-slug="finance-dashboard">
+            <div class="media-bar"><span class="mdot r"></span><span class="mdot y"></span><span class="mdot g"></span><span class="murl">finance-dashboard-khizar9.vercel.app</span></div>
+            <div class="media-placeholder">screenshots pending<br>— add to /images/finance-dashboard/</div>
+            <div class="media-slides">
+              <img src="images/finance-dashboard/1.jpg" alt="Finance Dashboard screenshot 1" loading="lazy" onerror="this.remove()">
+              <img src="images/finance-dashboard/2.jpg" alt="Finance Dashboard screenshot 2" loading="lazy" onerror="this.remove()">
+              <img src="images/finance-dashboard/3.jpg" alt="Finance Dashboard screenshot 3" loading="lazy" onerror="this.remove()">
+              <img src="images/finance-dashboard/4.jpg" alt="Finance Dashboard screenshot 4" loading="lazy" onerror="this.remove()">
+              <img src="images/finance-dashboard/5.jpg" alt="Finance Dashboard screenshot 5" loading="lazy" onerror="this.remove()">
+            </div>
+            <div class="media-dots"></div>
+          </div>
+          <div class="project-top">
+            <div class="project-name"><span class="dir">~/</span>finance-dashboard</div>
+            <div class="status-badge status-live">deployed</div>
+          </div>
+          <div class="project-desc">AI-powered personal finance tracker that turns raw transactions into a clear, visual spending story.</div>
+          <ul class="feature-list">
+            <li>Tracks income and expenses with real-time budget monitoring for a clear monthly view</li>
+            <li>AI auto-categorizes transactions and generates personalized spending insights automatically</li>
+            <li>Interactive dashboard visualizes spending trends and category breakdowns</li>
+            <li>Secure Google sign-in keeps each user's financial data private, no setup required</li>
+            <li>Live, usable product backed by a real database — not a demo</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Tailwind</span>
+            <span class="tag">Framer Motion</span><span class="tag">Recharts</span><span class="tag">Prisma</span><span class="tag">Gemini API</span>
+          </div>
+          <div class="project-links">
+            <a href="https://finance-dashboard-khizar9.vercel.app/" target="_blank" rel="noopener">Live demo</a>
+            <a href="https://github.com/Khizar-Islam/finance-dashboard" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-media" data-slug="cubeit">
+            <div class="media-bar"><span class="mdot r"></span><span class="mdot y"></span><span class="mdot g"></span><span class="murl">cubeit-ruddy.vercel.app</span></div>
+            <div class="media-placeholder">screenshots pending<br>— add to /images/cubeit/</div>
+            <div class="media-slides">
+              <img src="images/cubeit/1.jpg" alt="CubeIT website screenshot 1" loading="lazy" onerror="this.remove()">
+              <img src="images/cubeit/2.jpg" alt="CubeIT website screenshot 2" loading="lazy" onerror="this.remove()">
+              <img src="images/cubeit/3.jpg" alt="CubeIT website screenshot 3" loading="lazy" onerror="this.remove()">
+              <img src="images/cubeit/4.jpg" alt="CubeIT website screenshot 4" loading="lazy" onerror="this.remove()">
+            </div>
+            <div class="media-dots"></div>
+          </div>
+          <div class="project-top">
+            <div class="project-name"><span class="dir">~/</span>cubeit-website</div>
+            <div class="status-badge status-live">deployed</div>
+          </div>
+          <div class="project-desc">Official website for CubeIT, built as part of a two-month web development internship — working within an existing team codebase, feature tasks, and deploy workflow.</div>
+          <div class="tags">
+            <span class="tag">React</span><span class="tag">Team project</span><span class="tag">Internship</span>
+          </div>
+          <div class="project-links">
+            <a href="https://cubeit-ruddy.vercel.app/" target="_blank" rel="noopener">Live site</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-media" data-slug="nexora">
+            <div class="media-bar"><span class="mdot r"></span><span class="mdot y"></span><span class="mdot g"></span><span class="murl">nexora-workspace-swart.vercel.app</span></div>
+            <div class="media-placeholder">screenshots pending<br>— add to /images/nexora/</div>
+            <div class="media-slides">
+              <img src="images/nexora/1.jpg" alt="Nexora Workspace screenshot 1" loading="lazy" onerror="this.remove()">
+              <img src="images/nexora/2.jpg" alt="Nexora Workspace screenshot 2" loading="lazy" onerror="this.remove()">
+              <img src="images/nexora/3.jpg" alt="Nexora Workspace screenshot 3" loading="lazy" onerror="this.remove()">
+              <img src="images/nexora/4.jpg" alt="Nexora Workspace screenshot 4" loading="lazy" onerror="this.remove()">
+            </div>
+            <div class="media-dots"></div>
+          </div>
+          <div class="project-top">
+            <div class="project-name"><span class="dir">~/</span>nexora-workspace</div>
+            <div class="status-badge status-live">deployed</div>
+          </div>
+          <div class="project-desc">CubeIT's internal workspace platform — collaborated on assigned features and testing alongside the dev team, following professional workflows and deadlines.</div>
+          <div class="tags">
+            <span class="tag">React</span><span class="tag">Team project</span><span class="tag">Internship</span>
+          </div>
+          <div class="project-links">
+            <a href="https://nexora-workspace-swart.vercel.app/" target="_blank" rel="noopener">Live site</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap reveal">
+      <div class="eyebrow">contact --info</div>
+      <h2>Get in touch</h2>
+      <div class="contact-box">
+        <p class="contact-lead">Open to internships and full-stack dev roles in Karachi. <span class="hl">Email's the fastest way to reach me</span> — I check it daily.</p>
+        <div class="contact-list">
+          <a href="mailto:khizarislamrathore@gmail.com" class="contact-item">
+            <div class="contact-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" stroke="none"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-value">khizarislamrathore@gmail.com</div>
+            </div>
+          </a>
+          <a href="https://github.com/Khizar-Islam" target="_blank" rel="noopener" class="contact-item">
+            <div class="contact-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.03 3.26 9.29 7.79 10.8.57.1.78-.25.78-.55v-1.94c-3.17.69-3.84-1.53-3.84-1.53-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.53-.29-5.19-1.27-5.19-5.63 0-1.24.44-2.26 1.17-3.06-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.48 3.15-1.17 3.15-1.17.62 1.58.23 2.75.11 3.04.73.8 1.17 1.82 1.17 3.06 0 4.37-2.66 5.34-5.2 5.62.41.36.77 1.06.77 2.14v3.17c0 .3.21.66.79.55A10.53 10.53 0 0023.5 12.02C23.5 5.74 18.27.5 12 .5z"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">GitHub</div>
+              <div class="contact-value">Khizar-Islam</div>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/khizar-islam-rathore" target="_blank" rel="noopener" class="contact-item">
+            <div class="contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.25 2.36 4.25 5.44v6.3zM5.34 7.43a2.06 2.06 0 11.02-4.12 2.06 2.06 0 01-.02 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">LinkedIn</div>
+              <div class="contact-value">khizar-islam-rathore</div>
+            </div>
+          </a>
+          <div class="contact-item" style="cursor:default;">
+            <div class="contact-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">Location</div>
+              <div class="contact-value">Karachi, Pakistan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Khizar Islam Rathore</span>
+    <span><span class="accent">$</span> built without a purple gradient</span>
+  </div>
+</footer>
+
+<script>
+  // mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // reveal on scroll
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+
+  // project screenshot carousels
+  document.querySelectorAll('.project-media').forEach(media => {
+    // give onerror a moment to strip missing images first
+    setTimeout(() => {
+      const slidesWrap = media.querySelector('.media-slides');
+      const imgs = Array.from(slidesWrap.querySelectorAll('img'));
+      const dotsWrap = media.querySelector('.media-dots');
+      const placeholder = media.querySelector('.media-placeholder');
+
+      if (imgs.length === 0) return; // keep placeholder visible, nothing to rotate
+
+      placeholder.style.display = 'none';
+      imgs[0].classList.add('active');
+
+      imgs.forEach((img, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'media-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Show screenshot ' + (i + 1));
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(dot);
+      });
+      const dots = Array.from(dotsWrap.children);
+
+      let current = 0;
+      let timer;
+
+      function goTo(i) {
+        imgs[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = i;
+        imgs[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+
+      function next() { goTo((current + 1) % imgs.length); }
+
+      function startAuto() {
+        if (imgs.length < 2 || reduceMotion) return;
+        timer = setInterval(next, 4000);
+      }
+      function stopAuto() { clearInterval(timer); }
+
+      startAuto();
+      media.addEventListener('mouseenter', stopAuto);
+      media.addEventListener('mouseleave', startAuto);
+    }, 60);
+  });
+
+  const termBody = document.getElementById('termBody');
+  const script = [
+    { type: 'prompt', text: 'whoami' },
+    { type: 'out-big', text: 'Khizar Islam Rathore' },
+    { type: 'prompt', text: 'role --current' },
+    { type: 'out-accent', text: 'Full-Stack Web Developer' },
+    { type: 'prompt', text: 'status' },
+    { type: 'comment', text: 'Open to internships & dev roles in Karachi' },
+  ];
+
+  function buildLine(kind, text) {
+    const line = document.createElement('div');
+    line.className = 'term-line';
+    if (kind === 'prompt') {
+      line.innerHTML = '<span class="term-prompt">$</span><span class="term-out prompt-text"></span>';
+    } else if (kind === 'out-big') {
+      line.innerHTML = '<span class="hero-name out-text"></span>';
+      line.style.display = 'block';
+    } else if (kind === 'out-accent') {
+      line.innerHTML = '<span class="hero-role out-text"></span>';
+      line.style.display = 'block';
+    } else {
+      line.innerHTML = '<span class="term-comment out-text"></span>';
+    }
+    return line;
+  }
+
+  async function typeInto(el, text, speed) {
+    for (let i = 0; i < text.length; i++) {
+      el.textContent += text[i];
+      await new Promise(r => setTimeout(r, speed));
+    }
+  }
+
+  async function runTerminal() {
+    if (reduceMotion) {
+      script.forEach(step => {
+        const line = buildLine(step.type, step.text);
+        const target = line.querySelector('.prompt-text, .out-text');
+        target.textContent = step.text;
+        termBody.appendChild(line);
+      });
+      return;
+    }
+    for (const step of script) {
+      const line = buildLine(step.type, step.text);
+      termBody.appendChild(line);
+      const target = line.querySelector('.prompt-text, .out-text');
+      const speed = step.type === 'prompt' ? 38 : 22;
+      await typeInto(target, step.text, speed);
+      await new Promise(r => setTimeout(r, step.type === 'prompt' ? 120 : 320));
+    }
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    termBody.appendChild(cursor);
+  }
+  runTerminal();
+</script>
+
+</body>
+</html>
